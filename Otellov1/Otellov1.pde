@@ -3,6 +3,7 @@ int dimension=8;
 int casilla=55; //tamaño de la casilla px
 boolean turno=true; // Estado del turno del jugador 1 true -> turno player1 false ->turn player2
 
+
 void setup() {
   
   tablero = new int[dimension][dimension];
@@ -80,6 +81,31 @@ void mousePressed() {
     }
     println();
   }
+  desplegarFichas();
+}
+
+/**
+* Idea cuadratica para mostrar fichas
+*/
+void desplegarFichas(){
+  int b=0, n=0;
+  for(int i=0; i<dimension; i++){
+    for(int j=0; j<dimension; j++){
+      switch(tablero[j][i]){
+        case 1:
+          n++;
+          break;
+       case 2:
+         b++;
+         break;
+       default:
+         break;
+      }
+    }
+  }
+  
+  println("Fichas negras ", n);
+  println("Fichas blancas", b);
 }
 
 
@@ -315,6 +341,7 @@ void voltearFichas(int dir, int x, int y) {
 }
 
 // Funciones ya con sus direcciones, realmente empiezan en la pos siguiente segun su direccion
+// Aqui si actualizan cuantas fichas hay de cada uno
 
 /**
  * 0
@@ -367,7 +394,6 @@ void volFicNE(int x, int y) {
  * Cambia fichas hacia la direcion oo
  */
 void volFicOO(int x, int y) {
-  
   for (int i=x-1; i>=0; i--) {
     //cambio
     tablero[i][y] = inTurn();
