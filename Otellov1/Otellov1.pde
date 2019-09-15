@@ -38,13 +38,9 @@ void draw() {
 
 void mousePressed() {
 
-  println("inTurn: " + inTurn());
-  println("nextTurn: " + nextTurn());
-
   int posX = mouseX/casilla;
   int posY = mouseY/casilla;
 
-  println("Mouse ", posX, posY);
 
   //Areglo de direcciones; en el orden de la funcion
   //0=no, 1=nn, 2=ne, 3=oo, 4=ee, 5=so, 6=ss, 7=se
@@ -65,7 +61,6 @@ void mousePressed() {
 
   //hace cambios
   for (int i=0; i<dir.length; i++) {
-    println(dir[i], i);
     if (dir[i]) {
       voltearFichas(i, posX, posY);
     }
@@ -78,9 +73,6 @@ void mousePressed() {
   println("Posicion clikeada = " + "("+posX+","+posY+")");
   print("Turno siguiente: ");
   println(turno? "negras": "blancas");
-
-  println("inTurn: " + inTurn());
-  println("nextTurn: " + nextTurn());
 
   for (int i=0; i<dimension; i++) {
     for (int j=0; j<dimension; j++) {
@@ -274,7 +266,7 @@ boolean [] validMove(int x, int y) {
   }
 
   boolean dir [] = {no, nn, ne, oo, ee, so, ss, se};
-  //return no||nn||ne||oo||ee||so||ss||se;
+  
   return dir;
 }
 
@@ -297,35 +289,27 @@ void voltearFichas(int dir, int x, int y) {
   switch(dir) {
   case 0:
     volFicNO(x, y);
-    println("Entro en no");
     break;
   case 1:
     volFicNN(x, y);
-    println("Entro en nn");
     break;
   case 2:
     volFicNE(x, y);
-    println("Entro en ne");
     break;
   case 3:
     volFicOO(x, y);
-    println("Entro en oo");
     break;
   case 4:
     volFicEE(x, y);
-    println("Entro en ee");
     break;
   case 5:
     volFicSO(x, y);
-    println("Entro en so");
     break;
   case 6:
     volFicSS(x, y);
-    println("Entro en ss");
     break;
   case 7:
     volFicSE(x, y); //Todas esta mini funciones ya tienen claro su direccion
-    println("Entro en se");
     break;
   }
 }
@@ -392,15 +376,6 @@ void volFicOO(int x, int y) {
       break;
     }
   }
-  /**
-   println("cambio?");
-   for(int i=0; i<dimension; i++){
-   for(int j=0; j<dimension; j++){
-   print(tablero[j][i]);
-   }
-   println();
-   }
-   */
 }
 
 /**
