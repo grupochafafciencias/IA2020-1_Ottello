@@ -3,6 +3,9 @@ int dimension=8;
 int casilla=55; //tamaño de la casilla px
 boolean turno=true; // Estado del turno del jugador 1 true -> turno player1 false ->turn player2
 
+int fBlancas;
+int fNegras;
+
 
 void setup() {
   
@@ -13,6 +16,9 @@ void setup() {
    tablero[(dimension/2)][(dimension/2)-1] = 1;
    tablero[(dimension/2)][(dimension/2)] = 2;
    tablero[(dimension/2)-1][(dimension/2)] = 1;
+   
+   fBlancas = 2;
+   fNegras = 2;
   
 }
 
@@ -57,6 +63,7 @@ void mousePressed() {
   //pone ficha
   if (ver && tablero[posX][posY] == 0) {
     tablero[posX][posY] = turno? 1: 2;
+    actualizar1Ficha();
     //turno = !turno;
   }
 
@@ -88,6 +95,7 @@ void mousePressed() {
 * Idea cuadratica para mostrar fichas
 */
 void desplegarFichas(){
+  /*
   int b=0, n=0;
   for(int i=0; i<dimension; i++){
     for(int j=0; j<dimension; j++){
@@ -103,9 +111,9 @@ void desplegarFichas(){
       }
     }
   }
-  
-  println("Fichas negras ", n);
-  println("Fichas blancas", b);
+  */
+  println("Fichas negras ", fNegras);
+  println("Fichas blancas", fBlancas);
 }
 
 
@@ -343,19 +351,47 @@ void voltearFichas(int dir, int x, int y) {
 // Funciones ya con sus direcciones, realmente empiezan en la pos siguiente segun su direccion
 // Aqui si actualizan cuantas fichas hay de cada uno
 
+
+/**
+* Para los cambios parciales, en automatico con el volteado de fichas
+*/
+void miniCambio(int cam){
+  if(turno){//fueron las negras
+    fNegras += cam;
+    fBlancas -= cam;
+  }else{
+    fBlancas += cam;
+    fNegras -= cam;
+  }
+}
+
+/**
+* Solo una vez que se coloco una nueva ficha
+*/
+void actualizar1Ficha(){
+  if(turno){
+    fNegras++;
+  }else{
+    fBlancas++;
+  }
+}
+
 /**
  * 0
  * Cambia fichas hacia la direcion no
  */
 void volFicNO(int x, int y) {
+  int cam = 0;
   for (int i=x-1, j=y-1; i>=0&&j>=0; i--, j--) {
     //cambio
     tablero[i][j] = inTurn();
+    cam++;
     //ver la siguiente pos
     if (tablero[i-1][j-1]==inTurn()) {
       break; //se acabo
     }
   }
+  miniCambio(cam);
 }
 
 /**
@@ -363,14 +399,17 @@ void volFicNO(int x, int y) {
  * Cambia fichas hacia la direcion nn
  */
 void volFicNN(int x, int y) {
+  int cam = 0;
   for (int i=y-1; i>=0; i--) {
     //cambio
     tablero[x][i] = inTurn();
+    cam++;
     //next
     if (tablero[x][i-1]==inTurn()) {
       break;
     }
   }
+  miniCambio(cam);
 }
 
 /**
@@ -378,15 +417,18 @@ void volFicNN(int x, int y) {
  * Cambia fichas hacia la direcion ne
  */
 void volFicNE(int x, int y) {
+  int cam=0;
   for (int i=x+1, j=y-1; i<dimension&&j>=0; i++, j--) {
     //cambio
     tablero[i][j] = inTurn();
+    cam++;
     //ver la siguiente pos
     if (tablero[i+1][j-1]==inTurn()) { //todas las funciones ya tienen un tope y aqui si entra es ese tope
       //(x,y)----(tablero[][]) entra en estos if
       break; //se acabo
     }
   }
+  miniCambio(cam);
 }
 
 /**
@@ -394,14 +436,17 @@ void volFicNE(int x, int y) {
  * Cambia fichas hacia la direcion oo
  */
 void volFicOO(int x, int y) {
+  int cam=0;
   for (int i=x-1; i>=0; i--) {
     //cambio
     tablero[i][y] = inTurn();
+    cam++;
     //next
     if (tablero[i-1][y]==inTurn()) {
       break;
     }
   }
+  miniCambio(cam);
 }
 
 /**
@@ -409,14 +454,17 @@ void volFicOO(int x, int y) {
  * Cambia fichas hacia la direcion ee
  */
 void volFicEE(int x, int y) {
+  int cam=0;
   for (int i=x+1; i<dimension; i++) {
     //cambio
     tablero[i][y] = inTurn();
+    cam++;
     //next
     if (tablero[i+1][y]==inTurn()) {
       break;
     }
   }
+  miniCambio(cam);
 }
 
 /**
@@ -424,14 +472,17 @@ void volFicEE(int x, int y) {
  * Cambia fichas hacia la direcion so
  */
 void volFicSO(int x, int y) {
+  int cam=0;
   for (int i=x-1, j=y+1; i>=0&&j<dimension; i--, j++) {
     //cambio
     tablero[i][j] = inTurn();
+    cam++;
     //ver la siguiente pos
     if (tablero[i-1][j+1]==inTurn()) {
       break; //se acabo
     }
   }
+  miniCambio(cam);
 }
 
 /**
@@ -439,13 +490,16 @@ void volFicSO(int x, int y) {
  * Cambia fichas hacia la direcion ss
  */
 void volFicSS(int x, int y) {
+  int cam=0;
   for (int i=y+1; i<dimension; i++) {
     tablero[x][i]=inTurn();
+    cam++;
     //ver next
     if (tablero[x][i+1]==inTurn()) {
       break;
     }
   }
+  miniCambio(cam);
 }
 
 /**
@@ -453,12 +507,15 @@ void volFicSS(int x, int y) {
  * Cambia fichas hacia la direcion se
  */
 void volFicSE(int x, int y) {
+  int cam=0;
   for (int i=x+1, j=y+1; i<dimension&&j<dimension; i++, j++) {
     //cambio
     tablero[i][j] = inTurn();
+    cam++;
     //ver la siguiente pos
     if (tablero[i+1][j+1]==inTurn()) {
       break; //se acabo
     }
   }
+  miniCambio(cam);
 }
