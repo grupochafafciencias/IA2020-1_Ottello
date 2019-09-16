@@ -1,4 +1,16 @@
-int tablero [][]; //matriz del tablero
+int tablero [][];
+  /*
+   int tablero [][] = {
+            {1,1,1,1,1,2,1,0},
+            {1,2,2,1,2,2,1,0},
+            {1,2,1,2,1,2,1,1},
+            {1,1,2,1,1,2,1,1},
+            {1,1,1,2,2,1,1,1},
+            {1,1,1,2,2,1,1,1},
+            {1,1,1,2,1,1,1,1},
+            {1,1,1,2,2,2,2,1}
+  }; //matriz del tablero//prueva de salto de turno
+   */
 int dimension=8;
 int casilla=55; //tamaño de la casilla px
 boolean turno=true; // Estado del turno del jugador 1 true -> turno player1 false ->turn player2
@@ -16,6 +28,7 @@ void setup() {
    tablero[(dimension/2)][(dimension/2)-1] = 1;
    tablero[(dimension/2)][(dimension/2)] = 2;
    tablero[(dimension/2)-1][(dimension/2)] = 1;
+   
    
    fBlancas = 2;
    fNegras = 2;
@@ -47,7 +60,14 @@ void mousePressed() {
 
   int posX = mouseX/casilla;
   int posY = mouseY/casilla;
-
+  
+  print("Turno: ");
+  println(turno? "negras": "blancas");
+  //verificar que el jugador en turno puede tirar
+  if(saltaTurno()){
+    println("Se salta en turno de " + (turno? "Negras": "Blancas"));
+    turno = !turno;
+  }
 
   //Areglo de direcciones; en el orden de la funcion
   //0=no, 1=nn, 2=ne, 3=oo, 4=ee, 5=so, 6=ss, 7=se
@@ -57,9 +77,7 @@ void mousePressed() {
   for (int i=0; i<8; i++) {    
     ver = dir[i] || ver; //esta fue que se pudo clikear y todo el rollo
   }
-  print("Turno: ");
-  println(turno? "negras": "blancas");
-
+  
   //pone ficha
   if (ver && tablero[posX][posY] == 0) {
     tablero[posX][posY] = turno? 1: 2;
@@ -532,4 +550,28 @@ void volFicSE(int x, int y) {
     }
   }
   miniCambio(cam);
+}
+
+
+//Salto de turno por hay una posicion aogada
+//tiene que encontrar que almenos hay una tirada para el jugador en turno
+boolean saltaTurno(){
+  boolean salto = false;
+  for(int i=0; i<dimension; i++){
+    for(int j=0; j<dimension; j++){
+      if(tablero[j][i]==0){
+        //comprovamos
+        boolean dir[] =  validMove(j, i);
+        boolean ver = false;
+        for(int k=0; k<dir.length; k++){
+          ver = ver || dir[k];
+        }
+        salto = salto || ver;
+        if(salto){ //hubo una valida
+          break;
+        }
+      }
+    }
+  }
+  return !salto;
 }
