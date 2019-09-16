@@ -64,16 +64,19 @@ void mousePressed() {
   if (ver && tablero[posX][posY] == 0) {
     tablero[posX][posY] = turno? 1: 2;
     actualizar1Ficha();
-    //turno = !turno;
+    
+    //hacer cambios
+    voltearFichas(dir, posX, posY);
   }
 
+/**
   //hace cambios
   for (int i=0; i<dir.length; i++) {
     if (dir[i]) {
       voltearFichas(i, posX, posY);
     }
   }
-  
+  */
   //cambio de turno
   if(ver){
     turno = !turno;
@@ -303,6 +306,17 @@ boolean [] validMove(int x, int y) {
   
   return dir;
 }
+
+
+
+void voltearFichas(boolean [] dir, int posX, int posY){
+for (int i=0; i<dir.length; i++) {
+    if (dir[i]) {
+      voltearFichas(i, posX, posY);
+    }
+  }
+}
+
 
 
 /**
