@@ -120,19 +120,7 @@ class Tablero {
           ellipse(i*tamCasilla+(tamCasilla/2), j*tamCasilla+(tamCasilla/2), tamCasilla*3/5, tamCasilla*3/5);
         }
       }
-      
   }
-
-  /**
-   * Coloca o establece una ficha en una casilla específica del tablero.
-   * Nota: El eje vertical está invertido y el conteo empieza en cero.
-   * @param posX Coordenada horizontal de la casilla para establecer la ficha
-   * @param posX Coordenada vertical de la casilla para establecer la ficha
-   * @param turno Representa el turno o color de ficha a establecer
-   */
-  void setFicha(int posX, int posY, boolean turno) {
-    mundo[posX][posY] = turno ? 1 : 2;  //lol, y esta funcion privada con la otra solo por una linea para darle vueltas
-  }//no necesitaremos mas de esta sobrecarga
 
   // de aqui en adelante la logica de los turnos
 
@@ -144,13 +132,12 @@ class Tablero {
    * implica esto, haciendo una cascada de metodos
    */
   void setFicha(int posX, int posY) { 
-    //this.setFicha(posX, posY, this.turno); //pero turno ya es variable de la clase y siempre es accesible dentro de esta
     //verificar que el jugador en turno puede tirar, NOTA: a mejorar en posiciones doblemente ahogadas
     if (saltaTurno()) {
       println("Se salta en turno de " + (turno? "Negras": "Blancas"));
       turno = !turno; //realmente no avanza en turno el juego
     }
-        
+     /*
     //Areglo de direcciones; en el orden de la funcion
     //0=no, 1=nn, 2=ne, 3=oo, 4=ee, 5=so, 6=ss, 7=se
     boolean [] dir = validMoves(posX, posY);
@@ -158,7 +145,9 @@ class Tablero {
     boolean ver = false;
     for (int i=0; i<8; i++) {    
       ver = dir[i] || ver; //esta fue que se pudo clikear y todo el rollo
-    }
+    }*/
+    boolean [] dir = validMoves(posX, posY);
+    boolean ver = validPos(posX, posY);
 
     //pone ficha
     //mundo[posX][posY] == 0
@@ -174,17 +163,30 @@ class Tablero {
     if (ver) {
       cambiarTurno();
     }
-    //println("Posicion clikeada = " + "("+posX+","+posY+")");
-    print("Turno siguiente: ");
-    println(turno? "negras": "blancas");
-    //desplegarFichas(); -> desplegarStats
-    
-    //posiciones validas ? solo chequeo
-    println("Posiciones validas para " +(turno? "Negras": "Blancas") );
-    ArrayList<PVector> actions = tablero.acciones();
-    tablero.displayListaAcciones(actions);
-    
   }//end setFicha
+
+
+  /**
+   * La funcion simplificada de validMoves para una sola posicion
+   * en especial para usarla fuera de la clase
+   */
+  boolean validPos(int posX, int posY) {
+    //Areglo de direcciones; en el orden de la funcion
+    //0=no, 1=nn, 2=ne, 3=oo, 4=ee, 5=so, 6=ss, 7=se
+    //siempre se verifican en 8 posiciones la direccion
+    
+    if(estaOcupado(posX, posY)){
+      return false;
+    }
+    
+    boolean [] dir = validMoves(posX, posY);
+    //para activar la posicion 
+    boolean ver = false;
+    for (int i=0; i<8; i++) {    
+      ver = dir[i] || ver; //esta fue que se pudo clikear y todo el rollo
+    }
+    return ver;
+  }
 
   /**
    * Para que el despliegue de fichas no sea cuadratico,
@@ -192,6 +194,20 @@ class Tablero {
    * En un despliegue de quien fue el ultimo que jugo
    */
   void desplegarStats() {
+    println("Fichas negras " + tablero.fNegras);
+    println("Fichas blancas " + tablero.fBlancas);
+    println("Heuristica del momento " + ((tablero.turno? "Blancas ": "Negras ")) + tablero.heuristica()); 
+
+    print("Turno siguiente: ");
+    println(tablero.getTurno()? "negras": "blancas");
+    //desplegarFichas(); -> desplegarStats
+
+    //posiciones validas ? solo chequeo
+    println("Posiciones validas para " +(tablero.getTurno()? "Negras": "Blancas") );
+    ArrayList<PVector> actions = tablero.acciones();
+    tablero.displayListaAcciones(actions);
+
+    //finally
     println("[Turno #" + tablero.numeroDeTurno + "] "  + (tablero.turno? "jugó ficha blanca" : "jugó ficha negra") + 
       " (Score: " + fNegras + " - " + fBlancas + ")");
   }
@@ -722,73 +738,74 @@ class Tablero {
     }
     return listPos;
   }
-  
+
   /**
-  * auxiliar para desplegar la lista de posiciones
-  */
-  void displayListaAcciones(ArrayList<PVector> l){
+   * auxiliar para desplegar la lista de posiciones
+   */
+  void displayListaAcciones(ArrayList<PVector> l) {
     print("{ ");
     Iterator<PVector> iterator = l.iterator();
-    while(iterator.hasNext()){
+    while (iterator.hasNext()) {
       PVector v = iterator.next();
       print("(" + v.x + "," + v.y + (iterator.hasNext()? "), ": ")"));
     }
     println("}");
   }
-  
+
   /**
-  * Metodo para saber cuando termino el juego
-  * En teoria hay 3 casos:
-  * 1.-Cuando las fichaas sumas fNegras+fBlancas = 64
-  * 2.-Cuando alguna de las dos es cero
-  * 3.-Cuando hay una posicion doblente ahogada
-  * @return la logica de esos 3 casos
-  */
-  boolean gameOver(){
-    if(fNegras + fBlancas == dimension*dimension){
+   * Metodo para saber cuando termino el juego
+   * En teoria hay 3 casos:
+   * 1.-Cuando las fichaas sumas fNegras+fBlancas = 64
+   * 2.-Cuando alguna de las dos es cero
+   * 3.-Cuando hay una posicion doblente ahogada
+   * @return la logica de esos 3 casos
+   */
+  boolean gameOver() {
+    if (fNegras + fBlancas == dimension*dimension) {
       return true;
     }
-    
-    if(fNegras == 0 || fBlancas == 0){
+
+    if (fNegras == 0 || fBlancas == 0) {
       return true;
     }
-    
+
     boolean caso3 = dobleAhogada();
-    if(caso3){
+    if (caso3) {
       return true;
     }
     return false;
   }
-  
+
   /**
-  * Verifiquemos una doble ahogada con un solo turno
-  */
-  boolean dobleAhogada(){
+   * Verifiquemos una doble ahogada con un solo turno
+   */
+  boolean dobleAhogada() {
     Tablero tabC = tablero.clone();
     tabC.setTurno(!tabC.getTurno()); //cambio de turno del clon
-    
+
     ArrayList acc1 = acciones();
     ArrayList acc2 = tabC.acciones(); //acciones del siguiente jugador clon
-    return acc1.isEmpty() && acc2.isEmpty(); 
+    return acc1.isEmpty() && acc2.isEmpty();
   }
-  
+
   /**
-  * despliega en unn chasquido de dedos
-  * quien gano o si hubo empate
-  */
-  void endGame(){
-    if(fBlancas == fNegras){
-    println("Empate");
-    }else{
+   * despliega en unn chasquido de dedos
+   * quien gano o si hubo empate
+   */
+  void endGame() {
+    if (fBlancas == fNegras) {
+      println("Empate");
+    } else {
       println("Ganan las " + ((fNegras > fBlancas)? "Negras": "Blancas"));
     }
+    println("Reinicie para jugar de nuevo");
   }
-  
-  void setTurno(boolean turno){
+
+  void setTurno(boolean turno) {
     this.turno=turno;
   }
-  
-  boolean getTurno(){
+
+  boolean getTurno() {
     return turno;
   }
 }//end class Tablero

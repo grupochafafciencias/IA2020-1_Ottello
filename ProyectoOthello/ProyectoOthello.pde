@@ -36,25 +36,34 @@ void draw() {
  */
 void mousePressed() {
 
-    int posX = mouseX/tablero.tamCasilla;
-    int posY = mouseY/tablero.tamCasilla;
+  int posX = mouseX/tablero.tamCasilla;
+  int posY = mouseY/tablero.tamCasilla;
 
+  if (tablero.validPos(posX, posY)) {
     println("\nClic en la casilla " + "[" + posX + ", " + posY + "]");
 
-    //ahora el metodo setFicha esta MAMADISIMO i.e super robusto
+    //cuando se clikea y no es una posicion correcta de tiro setFicha ignora la accion y pasa
+    //al agente su tirada, haciendo parecer que juega por ti
+    
+
     tablero.setFicha(posX, posY);//tiramos siempre negras
-    println("Fichas negras " + tablero.fNegras);
-    println("Fichas blancas " + tablero.fBlancas);
-    println("Heuristica del momento " + ((tablero.turno? "Blancas ": "Negras ")) + tablero.heuristica()); 
+
+    //si te equivocas de clik el agente juega por ti XD
+
     tablero.desplegarStats();
 
     //tira el agente
+    //cuidado que la lista de movimientos no sea vacia sino el algortimo de miniMax de la IA, entraria en un indece inexistente
     if (!tablero.gameOver()) {
       int [] agenteMov = agente.nextMove();
       int agPx = agenteMov[0];
       int agPy = agenteMov[1];
       tablero.setFicha(agPx, agPy);
+      tablero.desplegarStats();
     }
-  
-  //tablero.endGame();
+
+    if (tablero.gameOver()) {
+      tablero.endGame();
+    }
+  }//end if verificacion 
 }
