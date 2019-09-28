@@ -54,7 +54,8 @@ void mousePressed() {
 
     //tira el agente
     //cuidado que la lista de movimientos no sea vacia sino el algortimo de miniMax de la IA, entraria en un indece inexistente
-    if (!tablero.gameOver()) {
+    //verificar que pueda tirar bien el agente
+    if (!tablero.gameOver() && agente.tieneNextM()) {
       int [] agenteMov = agente.nextMove();
       int agPx = agenteMov[0];
       int agPy = agenteMov[1];

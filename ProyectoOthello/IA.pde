@@ -206,5 +206,14 @@ class IA {
       }//fin de crear los arboles hijos
       return t;
     }//end else
+  }//end creacion del arbol
+  
+  /**
+  * Metodo para determinar si el agente puede tirar
+  */
+  boolean tieneNextM(){
+    ArrayList moves = tablero.acciones();
+    return !moves.isEmpty();
   }
-}
+  
+}//end clase IA
