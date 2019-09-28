@@ -51,7 +51,10 @@ class IA {
   int [] miniMax(NTree t) {
 
     //magia recursiva
-    int indice = minV(t);
+    int indice = maxV(t); 
+    /*En esta implementacion, se ve siempre hacia el sigueinte movimiento por lo que aparace que desde un nodo buscara
+      lo que le empieza a convenir desde la perspectiva de min o max
+    */ 
     //recuperemos las coordenadas de la lista de movimientos
     TableroCompuesto a = (TableroCompuesto)t.getDato();
     Tablero c = a.getTablero();
@@ -108,9 +111,8 @@ class IA {
       int v = tcActual.getHeuristica(); 
       return v;
     } else {
-
       int v = -10000; //primer valor de utilidad de max para escoger uno mas grande
-      ArrayList<NTree> hijos = t.getHijos();
+      ArrayList<NTree> hijos = t.getHijos(); 
       for (int i=0; i<hijos.size(); i++) {
         v = Math.max(v, minV(hijos.get(i)));
       }
