@@ -736,4 +736,59 @@ class Tablero {
     println("}");
   }
   
+  /**
+  * Metodo para saber cuando termino el juego
+  * En teoria hay 3 casos:
+  * 1.-Cuando las fichaas sumas fNegras+fBlancas = 64
+  * 2.-Cuando alguna de las dos es cero
+  * 3.-Cuando hay una posicion doblente ahogada
+  * @return la logica de esos 3 casos
+  */
+  boolean gameOver(){
+    if(fNegras + fBlancas == dimension*dimension){
+      return true;
+    }
+    
+    if(fNegras == 0 || fBlancas == 0){
+      return true;
+    }
+    
+    boolean caso3 = dobleAhogada();
+    if(caso3){
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+  * Verifiquemos una doble ahogada con un solo turno
+  */
+  boolean dobleAhogada(){
+    Tablero tabC = tablero.clone();
+    tabC.setTurno(!tabC.getTurno()); //cambio de turno del clon
+    
+    ArrayList acc1 = acciones();
+    ArrayList acc2 = tabC.acciones(); //acciones del siguiente jugador clon
+    return acc1.isEmpty() && acc2.isEmpty(); 
+  }
+  
+  /**
+  * despliega en unn chasquido de dedos
+  * quien gano o si hubo empate
+  */
+  void endGame(){
+    if(fBlancas == fNegras){
+    println("Empate");
+    }else{
+      println("Ganan las " + ((fNegras > fBlancas)? "Negras": "Blancas"));
+    }
+  }
+  
+  void setTurno(boolean turno){
+    this.turno=turno;
+  }
+  
+  boolean getTurno(){
+    return turno;
+  }
 }//end class Tablero
