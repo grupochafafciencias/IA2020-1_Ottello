@@ -61,7 +61,7 @@ class IA {
     ArrayList<PVector> m = c.acciones();
     
     //recuperamos el indice de la bubuja
-    int indice = utilidad.getI();
+    int indice = utilidad.getRi();
     
     PVector jugada = m.get(indice);
     int posX = (int)jugada.x;
@@ -80,21 +80,33 @@ class IA {
     //actualizar los estados de valores de las hojas
     if (t.isHoja()) {
       TableroCompuesto tcActual = (TableroCompuesto)t.getDato();
-      tcActual.setHeuristica(tcActual.getTablero().heuristica());
-      //return los valores de utilidad el valor de la heuristica del tablero compuesto y de donde vino ese indice
-      //int v = tcActual.getHeuristica(); 
+      tcActual.setHeuristica(tcActual.getTablero().heuristica()); 
       Burbuja v = new Burbuja();//con indice defaul
       v.setH(tcActual.getHeuristica()); //es en la posicion de los hijos donde se decide el valor del indice de la burbuja
+      //aqui la burbuja se construye bien por el arbol
+      v.setI(tcActual.getIndice());
+      v.setRi(tcActual.getRi());
       return v;
     } else {
       int hv = 10000; //primer valor de utilidad de min para escoger uno mas chico
-      Burbuja v = new Burbuja(hv,-1);
+      Burbuja v = new Burbuja(hv,-1,-1);
+      TableroCompuesto padre = (TableroCompuesto)t.getDato();
       ArrayList<NTree> hijos = t.getHijos();
+      
       for (int i=0; i<hijos.size(); i++) {
-        //v = Math.min(v, maxV(hijos.get(i)));
-        v = Burbuja.minimaB(v, maxV(hijos.get(i)), i);
+        
+        v = Burbuja.minimaB(v, maxV(hijos.get(i)));
+        padre.setRi(v.getI());
+        
       }
-
+      //sale de los hijos, y toma el indice actual=padre
+      //TableroCompuesto padre = (TableroCompuesto)t.getDato();
+      //v.setI(padre.getIndice());
+      //NTree hijoG = hijos.get(v.getI());
+      //TableroCompuesto hg = (TableroCompuesto)hijoG.getDato();
+      //v.setI(hg.getIndice());
+       v.setI(padre.getIndice());
+       v.setRi(padre.getRi());
       return v;
     }
   }//end min-V
@@ -115,21 +127,31 @@ class IA {
     if (t.isHoja()) {
       TableroCompuesto tcActual = (TableroCompuesto)t.getDato();
       tcActual.setHeuristica(tcActual.getTablero().heuristica());
-      //return los valores de utilidad el valor de la heuristica del tablero compuesto y de donde vino ese indice
-      //int v = tcActual.getHeuristica();
       Burbuja v = new Burbuja();
       v.setH(tcActual.getHeuristica()); //es en la posicion de los hijos donde se decide el valor del indice de la burbuja
       //aqui la burbuja se construye bien por el arbol
       v.setI(tcActual.getIndice());
+      v.setRi(tcActual.getRi());
       return v;
     } else {
       int hv = -10000; //primer valor de utilidad de max para escoger uno mas grande
-      Burbuja v = new Burbuja(hv,-1);
+      Burbuja v = new Burbuja(hv,-1,-1);
       ArrayList<NTree> hijos = t.getHijos(); 
+      TableroCompuesto padre = (TableroCompuesto)t.getDato();
+      //v.setI(padre.getIndice());
       for (int i=0; i<hijos.size(); i++) {
-        //v = Math.max(v, minV(hijos.get(i)));
-        v = Burbuja.maximaB(v, minV(hijos.get(i)), i);//no puede cambiar en cada iteracion i porque se cambiaria siempre hasta la ultima
+       
+        v = Burbuja.maximaB(v, minV(hijos.get(i)));//no puede cambiar en cada iteracion i porque se cambiaria siempre hasta la ultima
+        //recuerda el ultimo cambio
+        padre.setRi(v.getI());
       }
+       
+      v.setI(padre.getIndice());
+      v.setRi(padre.getRi());
+      //recuperamos el hijo ganador, por la burbuja
+      //NTree hijoG = hijos.get(v.getI());
+      //TableroCompuesto hg = (TableroCompuesto)hijoG.getDato();
+      //v.setI(hg.getIndice());
       return v;
     }
   }
@@ -149,18 +171,18 @@ class IA {
    * @return Ntree -- estructura de arbol ya creada
    */
   NTree crearArbolO(NTree t, int d) {
-    TableroCompuesto a = (TableroCompuesto)t.getDato();
-    Tablero c = a.getTablero();
-    ArrayList<PVector> m = c.acciones(); //algo redundante me salio estas dos
-    if (d == 0 || m.isEmpty()) {
+    TableroCompuesto actual = (TableroCompuesto)t.getDato();
+    Tablero act= actual.getTablero();
+    ArrayList<PVector> moves = act.acciones(); //algo redundante me salio estas dos
+    if (d == 0 || moves.isEmpty()) {
       return t;
     } else {
       //obtener el tablero compuesto
-      TableroCompuesto actual = (TableroCompuesto)t.getDato();
+      //TableroCompuesto actual = (TableroCompuesto)t.getDato();
       //obtener el tablero verdadero
-      Tablero act = actual.getTablero();
+      //Tablero act = actual.getTablero();
       //lista de acciones del original
-      ArrayList<PVector> moves = act.acciones();
+      //ArrayList<PVector> moves = act.acciones();
       for (int i=0; i<moves.size(); i++) {
         //casteo de posiciones
         PVector coorA = moves.get(i);

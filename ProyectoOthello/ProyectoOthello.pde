@@ -5,6 +5,7 @@
  */
 
 Tablero tablero;
+IA agente;
 //Tablero tClone;
 
 /**
@@ -12,6 +13,7 @@ Tablero tablero;
  */
 void settings(){
   tablero =  new Tablero();//8*60 - 8*60
+  agente = new IA(tablero);
   size(tablero.dimension * tablero.tamCasilla, tablero.dimension * tablero.tamCasilla);
 }
 
@@ -48,11 +50,17 @@ void mousePressed() {
    
   
   //ahora el metodo setFicha esta MAMADISIMO i.e super robusto
-  tablero.setFicha(posX, posY);
+  tablero.setFicha(posX, posY);//tiramos siempre negras
   println("Fichas negras " + tablero.fNegras);
   println("Fichas balncas " + tablero.fBlancas);
   println("Heuristica del momento " + ((tablero.turno? "Blancas ": "Negras ")) + tablero.heuristica()); 
   tablero.desplegarStats();
+  
+  //tira el agente
+  int [] agenteMov = agente.nextMove();
+  int agPx = agenteMov[0];
+  int agPy = agenteMov[1];
+  tablero.setFicha(agPx,agPy);
   
    //Test clone
   /*

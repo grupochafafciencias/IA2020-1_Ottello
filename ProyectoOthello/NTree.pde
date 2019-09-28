@@ -4,7 +4,7 @@ class  NTree<E>{
     
     NTree(E dato){
       this.dato = dato;
-      ListHijos = new ArrayList<>();
+      ListHijos = new ArrayList<NTree>();
     }
     
     E getDato(){

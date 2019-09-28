@@ -8,19 +8,29 @@
 */
 static class Burbuja{
   int h; //valor para guardar la heuristica/utilidad
-  int i; //para guardar el indice del hijo del que vino la heuristica
+  int i; //valor para subir en el arbol, el recorido de minV y maxV lo especifica
+  int ri; //para guardar el indice del hijo del que vino la heuristica
   
-  Burbuja(int h, int i){
+  Burbuja(int h, int i, int ri){
     this.h=h;
     this.i=i;
+    this.ri=ri;
   }
   
   //Overchansu
   Burbuja(){
-    this(0,-1);
+    this(0,-1,-1);
   }
   
   //accesos y esos
+  
+  int getRi(){
+    return ri;
+  }
+  
+  void setRi(int ri){
+    this.ri=ri;
+  }
   
   int getH(){
     return h;
@@ -38,41 +48,48 @@ static class Burbuja{
     this.i=i;
   }
   
+  /*
+    El valor del indice de las burbujas debe construirse deacuerdo al arbol
+  */
   
   /**
   * Un metodo que hara dos cosas dedicir que burbuja tienen la h mas grande
-  * y regresar tal burbuja, al mismo tiempo que modifica el otro valor indice de la burbuja
+  * y regresar tal burbuja,
   * para adecuarlo ala modificacion del algotimo de miniMax
   * @param Burubuja b1 -- una burbuja
   * @param Burbuja b2 -- otra burbuja a comparar
-  * @param int i -- el nuevo indice a modificar en la burbuja ganadora
   * @return Burbuja, la que tiene la h mas grande con el nuevo indice
   */
-  static Burbuja maximaB(Burbuja b1, Burbuja b2, int i){
+  static Burbuja maximaB(Burbuja b1, Burbuja b2){
     if(b1.getH() >= b2.getH()){
-      b1.setI(i);
       return b1;
     }else{
-      b2.setI(i);
       return b2;
     }
   }
   
+ 
+ //metodos para una comparacion rapida en el chequeo
+  static boolean mayorB(Burbuja b1, Burbuja b2){    
+    return b1.getH() > b2.getH() ;
+  }
+  
+  static boolean menorB(Burbuja b1, Burbuja b2){    
+    return b1.getH() < b2.getH() ;
+  }
+  
   /**
   * Un metodo que hara dos cosas dedicir que burbuja tienen la h mas pequeña
-  * y regresar tal burbuja, al mismo tiempo que modifica el otro valor indice de la burbuja
+  * y regresar tal burbuja, 
   * para adecuarlo ala modificacion del algotimo de miniMax
   * @param Burubuja b1 -- una burbuja
   * @param Burbuja b2 -- otra burbuja a comparar
-  * @param int i -- el nuevo indice a modificar en la burbuja ganadora
   * @return Burbuja, la que tiene la h mas pequeña con el nuevo indice
   */
-  static Burbuja minimaB(Burbuja b1, Burbuja b2, int i){
+  static Burbuja minimaB(Burbuja b1, Burbuja b2){
     if(b1.getH() <= b2.getH()){
-      b1.setI(i);
       return b1;
     }else{
-      b2.setI(i);
       return b2;
     }
   }
