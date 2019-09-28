@@ -133,19 +133,13 @@ class Tablero {
    */
   void setFicha(int posX, int posY) { 
     //verificar que el jugador en turno puede tirar, NOTA: a mejorar en posiciones doblemente ahogadas
+    
     if (saltaTurno()) {
       println("Se salta en turno de " + (turno? "Negras": "Blancas"));
       turno = !turno; //realmente no avanza en turno el juego
+      return;
     }
-     /*
-    //Areglo de direcciones; en el orden de la funcion
-    //0=no, 1=nn, 2=ne, 3=oo, 4=ee, 5=so, 6=ss, 7=se
-    boolean [] dir = validMoves(posX, posY);
-    //para activar la posicion 
-    boolean ver = false;
-    for (int i=0; i<8; i++) {    
-      ver = dir[i] || ver; //esta fue que se pudo clikear y todo el rollo
-    }*/
+     
     boolean [] dir = validMoves(posX, posY);
     boolean ver = validPos(posX, posY);
 
@@ -160,9 +154,10 @@ class Tablero {
     }
 
     //cambio de turno, fue un turno valido
+    /*
     if (ver) {
       cambiarTurno();
-    }
+    }*/
   }//end setFicha
 
 
@@ -230,23 +225,7 @@ class Tablero {
     return mundo[posX][posY] != 0;
   }
 
-  /**
-   * Cuenta la cantidad de fichas de un jugador
-   * @return La cantidad de fichas de ambos jugadores en el tablero como vector, 
-   * donde x = jugador1, y = jugador2
-   */
-  PVector cantidadFichas() { //Este metodo ya no es necesario
-    PVector contador = new PVector();
-    for (int i = 0; i < dimension; i++)
-      for (int j = 0; j < dimension; j++) {
-        if (mundo[i][j] == 1)
-          contador.x += 1;
-        if (mundo[i][j] == 2)
-          contador.y += 1;
-      }
-    return contador;
-  }
-
+ 
   //Antes Funciones, ahora es una metodo de esta clase
 
   /**
@@ -808,4 +787,14 @@ class Tablero {
   boolean getTurno() {
     return turno;
   }
+  
+  /**
+  * Para saber si en el tablero hay un siguiente movimiento en el tablero
+  * se puede usar para saber si el jugador tiene un siguiente movimiento
+  */
+  boolean hasNextM(){
+    ArrayList moves = acciones();
+    return !moves.isEmpty();
+  }
+  
 }//end class Tablero
