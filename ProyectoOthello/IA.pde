@@ -48,10 +48,10 @@ class IA {
    * @param NTree t -- arbol ya generado para aplicar completamente el algoritmo de miniMax
    * @return int[] un arrgle con las coordenadas x, y del siguente movimiento para tirar en el juego del otello
    */
-  int [] miniMax(NTree t) {
+  int [] miniMax(NTree t) { //asegurate de que miniMax no reciba una hoja, no tiene sentido, pues no tendria acciones para buscar
 
     //magia recursiva
-    int indice = maxV(t); 
+    Burbuja utilidad = maxV(t); 
     /*En esta implementacion, se ve siempre hacia el sigueinte movimiento por lo que aparace que desde un nodo buscara
       lo que le empieza a convenir desde la perspectiva de min o max
     */ 
@@ -59,7 +59,10 @@ class IA {
     TableroCompuesto a = (TableroCompuesto)t.getDato();
     Tablero c = a.getTablero();
     ArrayList<PVector> m = c.acciones();
-
+    
+    //recuperamos el indice de la bubuja
+    int indice = utilidad.getI();
+    
     PVector jugada = m.get(indice);
     int posX = (int)jugada.x;
     int posY = (int)jugada.y;
@@ -73,19 +76,23 @@ class IA {
    * @param t NTree
    * @return la burbuja de donde vino con sus valores de utilidad la h y el ri que se actualizan
    */
-  int minV(NTree t) {
+  Burbuja minV(NTree t) {
     //actualizar los estados de valores de las hojas
     if (t.isHoja()) {
       TableroCompuesto tcActual = (TableroCompuesto)t.getDato();
       tcActual.setHeuristica(tcActual.getTablero().heuristica());
       //return los valores de utilidad el valor de la heuristica del tablero compuesto y de donde vino ese indice
-      int v = tcActual.getHeuristica(); 
+      //int v = tcActual.getHeuristica(); 
+      Burbuja v = new Burbuja();//con indice defaul
+      v.setH(tcActual.getHeuristica()); //es en la posicion de los hijos donde se decide el valor del indice de la burbuja
       return v;
     } else {
-      int v = 10000; //primer valor de utilidad de min para escoger uno mas chico
+      int hv = 10000; //primer valor de utilidad de min para escoger uno mas chico
+      Burbuja v = new Burbuja(hv,-1);
       ArrayList<NTree> hijos = t.getHijos();
       for (int i=0; i<hijos.size(); i++) {
-        v = Math.min(v, maxV(hijos.get(i)));
+        //v = Math.min(v, maxV(hijos.get(i)));
+        v = Burbuja.minimaB(v, maxV(hijos.get(i)), i);
       }
 
       return v;
@@ -101,20 +108,27 @@ class IA {
   * @param Ntree t un arbol de Tableros Compuestos
   * @return la utilidad que al final lo mas util no era el valor de la heuristica sino el indice 
   * que seria la accion de donde vino tal heuristica y con ella poder elegir el siguiente movimiento
+  * la burbuja de utilidad
   */
-  int maxV(NTree t) {
+  Burbuja maxV(NTree t) {
     //actualizar los estados de valores de las hojas
     if (t.isHoja()) {
       TableroCompuesto tcActual = (TableroCompuesto)t.getDato();
       tcActual.setHeuristica(tcActual.getTablero().heuristica());
       //return los valores de utilidad el valor de la heuristica del tablero compuesto y de donde vino ese indice
-      int v = tcActual.getHeuristica(); 
+      //int v = tcActual.getHeuristica();
+      Burbuja v = new Burbuja();
+      v.setH(tcActual.getHeuristica()); //es en la posicion de los hijos donde se decide el valor del indice de la burbuja
+      //aqui la burbuja se construye bien por el arbol
+      v.setI(tcActual.getIndice());
       return v;
     } else {
-      int v = -10000; //primer valor de utilidad de max para escoger uno mas grande
+      int hv = -10000; //primer valor de utilidad de max para escoger uno mas grande
+      Burbuja v = new Burbuja(hv,-1);
       ArrayList<NTree> hijos = t.getHijos(); 
       for (int i=0; i<hijos.size(); i++) {
-        v = Math.max(v, minV(hijos.get(i)));
+        //v = Math.max(v, minV(hijos.get(i)));
+        v = Burbuja.maximaB(v, minV(hijos.get(i)), i);//no puede cambiar en cada iteracion i porque se cambiaria siempre hasta la ultima
       }
       return v;
     }
