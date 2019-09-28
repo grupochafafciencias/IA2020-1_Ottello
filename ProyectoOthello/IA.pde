@@ -8,9 +8,11 @@
 class IA {
 
   Tablero tablero;
+  int profundidad;
 
-  IA(Tablero tab) {
+  IA(Tablero tab, int prof) {
     this.tablero = tab;
+    this.profundidad = prof;
   }
 
 
@@ -24,12 +26,12 @@ class IA {
    */
   int [] nextMove() {
 
-    int profundidad = 3; //dificultad y busqueda en el arbol, a mejorar quiza en el futuro
+    //int profundidad = 3; //dificultad y busqueda en el arbol, a mejorar quiza en el futuro
     Tablero cTablero = tablero.clone(); // cuidado de nunca modificar el tablero original
     TableroCompuesto tc = new TableroCompuesto(cTablero); //Raiz a iniciar
 
     NTree t = new NTree(tc);
-    NTree tree = crearArbolO(t, profundidad);
+    NTree tree = crearArbolO(t, profundidad); //solo la usamos una vez la frofundidad
 
     int[] coor = miniMax(tree);
 

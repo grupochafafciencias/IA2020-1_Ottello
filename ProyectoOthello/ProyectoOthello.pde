@@ -6,14 +6,14 @@
 
 Tablero tablero;
 IA agente;
-//Tablero tClone;
+int dificultad = 3;
 
 /**
  * Método para establecet tamaño de ventana al incluir variables
  */
 void settings() {
   tablero =  new Tablero();//8*60 - 8*60
-  agente = new IA(tablero); //a su PTM
+  agente = new IA(tablero,dificultad); //a su PTM
   size(tablero.dimension * tablero.tamCasilla, tablero.dimension * tablero.tamCasilla);
 }
 
