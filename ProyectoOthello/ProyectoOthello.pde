@@ -6,7 +6,7 @@
 
 Tablero tablero;
 IA agente;
-int dificultad = 3;
+int dificultad = 4;
 
 /**
  * Método para establecet tamaño de ventana al incluir variables
